@@ -7,6 +7,7 @@ import io.restassured.response.ValidatableResponse;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class OlaMundoTest {
     }
 
     @Test
-    public void devoConhecerOutrasFormasRestAssured() {
+    public void conhecerOutrasFormasRestAssured() {
 
         //Forma não otimizada de fazer a validação
         Response response = RestAssured.request(Method.GET, "http://restapi.wcaquino.me/ola");
@@ -42,14 +43,14 @@ public class OlaMundoTest {
 
         //Forma otimizada e com legibilidade utilizando Given, When e Then
         given()
-                .when()
-                .get("http://restapi.wcaquino.me/ola")
-                .then()
-                .statusCode(200);
+        .when()
+            .get("http://restapi.wcaquino.me/ola")
+        .then()
+            .statusCode(200);
     }
 
     @Test
-    public void devoConhecerMatchersHamcrest() {
+    public void conhecerMatchersHamcrest() {
 
         Assert.assertThat("Maria", Matchers.is("Maria"));
         Assert.assertThat(777, Matchers.is(777));
@@ -57,12 +58,12 @@ public class OlaMundoTest {
         Assert.assertThat(2207d, Matchers.greaterThanOrEqualTo(2207d));
         Assert.assertThat(-30, Matchers.lessThanOrEqualTo(-20));
 
-
+        //Asserções com lista
         List<Integer> impares = Arrays.asList(1, 3, 5, 7);
         Assert.assertThat(impares, Matchers.hasSize(4));
-        Assert.assertThat(impares, Matchers.contains(1,3,5,7));
-        Assert.assertThat(impares, Matchers.containsInAnyOrder(7,5,3,1));
-        Assert.assertThat(impares, Matchers.hasItems(1,3));
+        Assert.assertThat(impares, Matchers.contains(1, 3, 5, 7));
+        Assert.assertThat(impares, Matchers.containsInAnyOrder(7, 5, 3, 1));
+        Assert.assertThat(impares, Matchers.hasItems(1, 3));
 
         //Sem utilizar o import static do Matchers e Assert
         Assert.assertThat("Maria", Matchers.is(Matchers.not("Joao")));
@@ -70,5 +71,22 @@ public class OlaMundoTest {
         //Utilizando o import static do Matchers e Assert
         assertThat("Maria", is(not("Joao")));
         assertThat("Maria", not("Joao"));
+
+        //Disjunção e conjunção
+        assertThat("Joaquina", anyOf(is("Maria"), is("Joaquina")));
+        assertThat("Joaquina", allOf(startsWith("Jo"), endsWith("a"), containsString("aqui")));
     }
+
+    @Test
+    public void validarOBody(){
+        given()
+        .when()
+            .get("http://restapi.wcaquino.me/ola")
+        .then()
+            .statusCode(200)
+            .body(is("Ola Mundo!"))
+            .body(containsString("Mundo"))
+            .body(is(notNullValue()));
+    }
+
 }
